@@ -126,11 +126,37 @@ export class QdrantConnector {
       score_threshold: scoreThreshold,
     });
 
-    // 結果を Entry オブジェクトに変換
-    const entries: Entry[] = results.map(result => ({
-      content: (result.payload?.content as string) || '',
-      metadata: result.payload?.metadata as Record<string, unknown> | undefined,
-    }));
+    // 結果を Entry オブジェクトに変換（VSCode 形式と標準形式の両方に対応）
+    const entries: Entry[] = results.map(result => {
+      const payload = result.payload || {};
+
+      // content フィールドを取得（content または codeChunk）
+      const content = (payload.content || payload.codeChunk || '') as string;
+
+      // metadata を構築（VSCode 形式のフィールドを含める）
+      const metadata: Record<string, unknown> = {};
+
+      // 既存の metadata があればマージ
+      if (payload.metadata) {
+        Object.assign(metadata, payload.metadata as Record<string, unknown>);
+      }
+
+      // VSCode 形式のフィールドを metadata に追加
+      if (payload.filePath) {
+        metadata.filePath = payload.filePath;
+      }
+      if (payload.startLine !== undefined) {
+        metadata.startLine = payload.startLine;
+      }
+      if (payload.endLine !== undefined) {
+        metadata.endLine = payload.endLine;
+      }
+
+      return {
+        content,
+        metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+      };
+    });
 
     console.log(`検索結果: ${entries.length}件のエントリーを取得`);
     return entries;
