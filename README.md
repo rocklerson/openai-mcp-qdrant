@@ -15,12 +15,23 @@ Qdrant MCP server with OpenAI Compatible API embedding support.
   - `qdrant-store`: 情報とメタデータを保存
   - `qdrant-find`: 意味検索による関連情報の取得
 - **環境変数設定**: 柔軟な設定管理
-- **FastMCP フレームワーク**: 高性能な非同期処理
+- **TypeScript 実装**: 型安全で保守しやすいコード
 
 ## インストール
 
+### npm から
+
 ```bash
-pip install -e .
+npm install -g @rocklerson/openai-mcp-qdrant
+```
+
+### ソースから
+
+```bash
+git clone https://github.com/rocklerson/openai-mcp-qdrant.git
+cd openai-mcp-qdrant
+npm install
+npm run build
 ```
 
 ## 環境変数
@@ -38,23 +49,6 @@ pip install -e .
 
 ## 使用方法
 
-### 基本的な使用方法
-
-```bash
-# 環境変数を設定
-export OPENAI_API_KEY="your-api-key"
-export QDRANT_URL="http://localhost:6333"
-
-# 開発モードで起動（MCP インスペクター付き）
-fastmcp dev src/mcp_server_qdrant/server.py
-
-# stdio モードで起動（ローカル MCP クライアント用）
-fastmcp run src/mcp_server_qdrant/server.py
-
-# SSE モードで起動（リモート MCP クライアント用）
-fastmcp run src/mcp_server_qdrant/server.py --transport sse
-```
-
 ### Claude Desktop での設定
 
 `claude_desktop_config.json` に以下を追加：
@@ -63,8 +57,8 @@ fastmcp run src/mcp_server_qdrant/server.py --transport sse
 {
   "mcpServers": {
     "qdrant": {
-      "command": "fastmcp",
-      "args": ["run", "/path/to/workspace/src/mcp_server_qdrant/server.py"],
+      "command": "npx",
+      "args": ["-y", "@rocklerson/openai-mcp-qdrant"],
       "env": {
         "OPENAI_API_KEY": "your-api-key",
         "QDRANT_URL": "http://localhost:6333",
@@ -75,25 +69,98 @@ fastmcp run src/mcp_server_qdrant/server.py --transport sse
 }
 ```
 
-詳細な使用例は `USAGE_EXAMPLES.py` を参照してください。
+### ローカルでの開発
+
+```bash
+# 環境変数を設定
+export OPENAI_API_KEY="your-api-key"
+export QDRANT_URL="http://localhost:6333"
+
+# ビルド
+npm run build
+
+# 実行
+node dist/index.js
+```
+
+### MCP Inspector での開発
+
+```bash
+# 環境変数を設定
+export OPENAI_API_KEY="your-api-key"
+export QDRANT_URL="http://localhost:6333"
+
+# ビルドと実行
+npm run build
+npm run inspector
+```
 
 ## プロジェクト構成
 
 ```
-src/mcp_server_qdrant/
-├── __init__.py
-├── server.py              # メインエントリーポイント
-├── mcp_server.py          # MCP サーバー実装
-├── settings.py            # 環境変数設定管理
+src/
+├── index.ts                      # メインエントリーポイント
+├── config.ts                     # 環境変数設定管理
+├── types.ts                      # 型定義
 ├── embeddings/
-│   ├── __init__.py
-│   ├── base.py            # 埋め込みプロバイダー抽象基底クラス
-│   ├── openai_provider.py # OpenAI Compatible API 実装
-│   └── factory.py         # ファクトリー関数
+│   └── openai-provider.ts        # OpenAI Compatible API 実装
 └── qdrant/
-    ├── __init__.py
-    └── connector.py       # Qdrant 接続とデータ操作
+    └── connector.ts              # Qdrant 接続とデータ操作
 ```
+
+## 利用可能なツール
+
+### qdrant-store
+
+情報を Qdrant に保存します。
+
+**パラメータ:**
+- `information` (string, 必須): 保存するテキスト情報
+- `metadata` (object, オプション): 追加のメタデータ（JSON形式）
+
+**例:**
+```json
+{
+  "information": "Python は動的型付けのプログラミング言語です",
+  "metadata": {
+    "category": "programming",
+    "language": "python"
+  }
+}
+```
+
+### qdrant-find
+
+Qdrant から関連情報を検索します。
+
+**パラメータ:**
+- `query` (string, 必須): 検索クエリ
+
+**例:**
+```json
+{
+  "query": "プログラミング言語について教えて"
+}
+```
+
+## Qdrant のセットアップ
+
+### ローカル Qdrant の起動（Docker）
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+### Qdrant Cloud の使用
+
+1. https://cloud.qdrant.io でアカウントを作成
+2. クラスターを作成
+3. API キーと URL を取得
+4. 環境変数を設定：
+   ```bash
+   export QDRANT_URL="https://your-cluster.qdrant.io:6333"
+   export QDRANT_API_KEY="your-api-key"
+   ```
 
 ## 技術的な特徴
 
@@ -101,9 +168,26 @@ src/mcp_server_qdrant/
 - **DRY 原則**: 重複を避けた実装
 - **YAGNI 原則**: 必要な機能のみを実装
 - **SOLID 原則**: 拡張可能で保守しやすい設計
-- **非同期処理**: 高性能な I/O 操作
-- **型ヒント**: 完全な型アノテーション
+- **型安全**: TypeScript による完全な型チェック
+- **非同期処理**: async/await による高性能な I/O 操作
 - **エラーハンドリング**: 適切なログとエラー処理
+
+## 開発
+
+```bash
+# 依存関係のインストール
+npm install
+
+# ビルド
+npm run build
+
+# ウォッチモード
+npm run watch
+```
+
+## ライセンス
+
+MIT
 
 ## 参考
 
