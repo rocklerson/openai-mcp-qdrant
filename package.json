@@ -1,0 +1,45 @@
+{
+  "name": "@rocklerson/openai-mcp-qdrant",
+  "version": "0.1.0",
+  "description": "Qdrant MCP server with OpenAI Compatible API embedding support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "openai-mcp-qdrant": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepare": "npm run build",
+    "inspector": "node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "qdrant",
+    "openai",
+    "embedding",
+    "vector-database",
+    "semantic-search"
+  ],
+  "author": "rocklerson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rocklerson/openai-mcp-qdrant.git"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "@qdrant/js-client-rest": "^1.12.0",
+    "openai": "^4.77.3",
+    "uuid": "^11.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
