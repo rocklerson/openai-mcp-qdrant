@@ -26,7 +26,7 @@ export class QdrantConnector {
       apiKey,
     });
 
-    console.log(`Qdrant コネクターを初期化: url=${url}, collection=${collectionName}`);
+    console.error(`Qdrant コネクターを初期化: url=${url}, collection=${collectionName}`);
   }
 
   /**
@@ -41,7 +41,7 @@ export class QdrantConnector {
       );
 
       if (collectionExists) {
-        console.log(`コレクション '${this.collectionName}' は既に存在します`);
+        console.error(`コレクション '${this.collectionName}' は既に存在します`);
         return;
       }
 
@@ -49,7 +49,7 @@ export class QdrantConnector {
       const vectorSize = this.embeddingProvider.getVectorSize();
       const vectorName = this.embeddingProvider.getVectorName();
 
-      console.log(
+      console.error(
         `コレクション '${this.collectionName}' を作成中: ` +
         `vector_name=${vectorName}, vector_size=${vectorSize}`
       );
@@ -61,7 +61,7 @@ export class QdrantConnector {
         },
       });
 
-      console.log(`コレクション '${this.collectionName}' を作成しました`);
+      console.error(`コレクション '${this.collectionName}' を作成しました`);
     } catch (error) {
       console.error('コレクションの確認/作成中にエラーが発生:', error);
       throw error;
@@ -101,7 +101,7 @@ export class QdrantConnector {
       ],
     });
 
-    console.log(`エントリーを保存しました: id=${pointId}`);
+    console.error(`エントリーを保存しました: id=${pointId}`);
     return pointId;
   }
 
@@ -158,7 +158,7 @@ export class QdrantConnector {
       };
     });
 
-    console.log(`検索結果: ${entries.length}件のエントリーを取得`);
+    console.error(`検索結果: ${entries.length}件のエントリーを取得`);
     return entries;
   }
 }

@@ -18,7 +18,7 @@ export class OpenAIEmbeddingProvider {
       baseURL,
     });
     
-    console.log(`OpenAI埋め込みプロバイダーを初期化: model=${model}, baseURL=${baseURL || 'default'}`);
+    console.error(`OpenAI埋め込みプロバイダーを初期化: model=${model}, baseURL=${baseURL || 'default'}`);
   }
 
   /**
@@ -29,7 +29,7 @@ export class OpenAIEmbeddingProvider {
       return [];
     }
 
-    console.log(`${documents.length}個のドキュメントを埋め込み中`);
+    console.error(`${documents.length}個のドキュメントを埋め込み中`);
 
     try {
       const response = await this.client.embeddings.create({
@@ -38,7 +38,7 @@ export class OpenAIEmbeddingProvider {
       });
 
       const embeddings = response.data.map(item => item.embedding);
-      console.log(`${embeddings.length}個のベクトルを取得`);
+      console.error(`${embeddings.length}個のベクトルを取得`);
 
       return embeddings;
     } catch (error) {
@@ -51,7 +51,7 @@ export class OpenAIEmbeddingProvider {
    * クエリをベクトルに埋め込む
    */
   async embedQuery(query: string): Promise<number[]> {
-    console.log(`クエリを埋め込み中: ${query.substring(0, 50)}...`);
+    console.error(`クエリを埋め込み中: ${query.substring(0, 50)}...`);
 
     try {
       const response = await this.client.embeddings.create({
@@ -60,7 +60,7 @@ export class OpenAIEmbeddingProvider {
       });
 
       const embedding = response.data[0].embedding;
-      console.log(`ベクトルを取得: サイズ=${embedding.length}`);
+      console.error(`ベクトルを取得: サイズ=${embedding.length}`);
 
       return embedding;
     } catch (error) {
